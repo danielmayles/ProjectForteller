@@ -38,6 +38,16 @@ public class EditorPlayerController : MonoBehaviour {
 				Cursor.lockState = CursorLockMode.Locked;
 			}
 		}
+
+		if (Input.GetKeyDown(KeyCode.F1))
+		{
+			Shell.dialogueService.LoadDialogueFromFile();
+		}
+		
+		if (Input.GetKeyDown(KeyCode.F2))
+		{
+			Shell.dialogueService.WriteDialogueToFile();
+		}
 		
 		_rotationVelocity.x += Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
 		_rotationVelocity.y += Input.GetAxis("Mouse Y") * sensitivityY * Time.deltaTime;

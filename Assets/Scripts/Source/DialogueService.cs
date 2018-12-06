@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -27,26 +28,33 @@ public class DialogueService {
 	private Serializer serializer = new Serializer();
 	private int currentIndex;
 
-	public DialogueService() {
-		LoadDialogueFromFile();
-	}
-
+	public delegate void LoadDialogueFinished(List<DialogueData> dialogue);
+	public LoadDialogueFinished OnLoadDialogueFinished;
+	
 	public void AddNewDialogueObject(DialogueObject newDialogue) {
 		while (dialogue.ContainsKey(currentIndex)) {
 			currentIndex++;
 		}
+		newDialogue.init(currentIndex);
 		dialogue.Add(currentIndex, new DialogueData(currentIndex, newDialogue.GetDialogue(), newDialogue.transform.position, newDialogue.transform.rotation, newDialogue.DialogueLinks()));		
 	}
+	
+	public void UpdateDialogueObject(DialogueObject dialogueObject) {
+		dialogue[dialogueObject.GetDialogueId()] = new DialogueData(dialogueObject.GetDialogueId(), dialogueObject.GetDialogue(), dialogueObject.transform.position, dialogueObject.transform.rotation, dialogueObject.DialogueLinks());		
+	}
 
-	public void RemoveDialogueObject(int key) {
-		dialogue.Remove(key);
+	public void RemoveDialogueObject(int id) {
+		if (dialogue.ContainsKey(id))
+		{
+			dialogue.Remove(id);
+		}
 	}
 
 	public List<DialogueData> GetDialogue() {
 		return new List<DialogueData>(dialogue.Values);
 	}
 	
-	private void WriteDialogueToFile() {
+	public void WriteDialogueToFile() {
 		const string path = "Assets/Resources/Dialogue/dialogue.txt";
 		File.Delete(path);
 		
@@ -64,7 +72,7 @@ public class DialogueService {
 		File.WriteAllBytes(path, serializer.ReadData());
 	}
 	
-	private void LoadDialogueFromFile() {
+	public void LoadDialogueFromFile() {
 		dialogue.Clear();
 		const string path = "Assets/Resources/Dialogue/dialogue.txt";	
 		serializer.WriteInData(File.ReadAllBytes(path));
@@ -81,6 +89,11 @@ public class DialogueService {
 			}
 			DialogueData dialogueData = new DialogueData(id, dialogueString, position, rotation, dialogueLinks);
 			dialogue.Add(id, dialogueData);
+		}
+
+		if (OnLoadDialogueFinished != null)
+		{
+			OnLoadDialogueFinished(dialogue.Values.ToList());
 		}
 	}
 }
