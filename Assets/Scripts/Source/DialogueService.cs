@@ -60,10 +60,12 @@ public class DialogueService {
 		
 		serializer.SerializeInt(dialogue.Count);
 		foreach (int dialogueKey in dialogue.Keys) {
+			Debug.Log(dialogue[dialogueKey].Position);
 			serializer.SerializeInt(dialogueKey);
-			serializer.SerializeString(dialogue[dialogueKey].dialogue);
 			serializer.SerializeVector3(dialogue[dialogueKey].Position);
 			serializer.SerializeQuaternion(dialogue[dialogueKey].Rotation);
+			
+			serializer.SerializeString(dialogue[dialogueKey].dialogue);
 			serializer.SerializeInt(dialogue[dialogueKey].DialogueLinks.Length);
 			for (int i = 0; i < dialogue[dialogueKey].DialogueLinks.Length; i++) {
 				serializer.SerializeInt(dialogue[dialogueKey].DialogueLinks[i]);
@@ -80,9 +82,11 @@ public class DialogueService {
 		int amountOfDialogue = serializer.ReadInt();
 		for (int i = 0; i < amountOfDialogue; i++) {
 			int id = serializer.ReadInt();
-			string dialogueString = serializer.ReadString();
 			Vector3 position = serializer.ReadVector3();
 			Quaternion rotation = serializer.ReadQuaternion();
+			Debug.Log(position);
+			
+			string dialogueString = serializer.ReadString();
 			int[] dialogueLinks = new int[serializer.ReadInt()];
 			for (int linkIndex = 0; linkIndex < dialogueLinks.Length; linkIndex++) {
 				dialogueLinks[linkIndex] = serializer.ReadInt();

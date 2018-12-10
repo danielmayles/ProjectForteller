@@ -23,7 +23,9 @@ public class Serializer {
 	
 	public void SerializeString(string stringToSerialize) {
 		SerializeInt(stringToSerialize.Length);
-		data.AddRange(System.Text.Encoding.UTF8.GetBytes(stringToSerialize));
+		if (stringToSerialize.Length > 0) {
+			data.AddRange(System.Text.Encoding.UTF8.GetBytes(stringToSerialize));
+		}
 	}
 	
 	public void SerializeInt(int int32) {
@@ -49,11 +51,14 @@ public class Serializer {
 	
 	public string ReadString() {
 		int stringSize = ReadInt();
-		byte[] stringData = new byte[stringSize];
-		Array.Copy(data.ToArray(), 0, stringData, 0, stringSize);
-		string result = System.Text.Encoding.UTF8.GetString(stringData);
-		data.RemoveRange(0, stringSize);
-		return result;
+		if (stringSize > 0) {
+			byte[] stringData = new byte[stringSize];
+			Array.Copy(data.ToArray(), 0, stringData, 0, stringSize);
+			string result = System.Text.Encoding.UTF8.GetString(stringData);
+			data.RemoveRange(0, stringSize);
+			return result;
+		}
+		return "";
 	}
 	
 	public int ReadInt() {
@@ -70,19 +75,19 @@ public class Serializer {
 	
 	public Vector3 ReadVector3() {
 		Vector3 vector3 = Vector3.zero;
-		vector3.x = BitConverter.ToInt32(data.ToArray(), 0);
-		vector3.y = BitConverter.ToInt32(data.ToArray(), 4);
-		vector3.z = BitConverter.ToInt32(data.ToArray(), 8);
+		vector3.x = BitConverter.ToSingle(data.ToArray(), 0);
+		vector3.y = BitConverter.ToSingle(data.ToArray(), 4);
+		vector3.z = BitConverter.ToSingle(data.ToArray(), 8);
 		data.RemoveRange(0, 12);
 		return vector3;
 	}
 
 	public Quaternion ReadQuaternion() {
 		Quaternion quaternion = Quaternion.identity;
-		quaternion.x = BitConverter.ToInt32(data.ToArray(), 0);
-		quaternion.y = BitConverter.ToInt32(data.ToArray(), 4);
-		quaternion.z = BitConverter.ToInt32(data.ToArray(), 8);	
-		quaternion.w = BitConverter.ToInt32(data.ToArray(), 12);
+		quaternion.x = BitConverter.ToSingle(data.ToArray(), 0);
+		quaternion.y = BitConverter.ToSingle(data.ToArray(), 4);
+		quaternion.z = BitConverter.ToSingle(data.ToArray(), 8);	
+		quaternion.w = BitConverter.ToSingle(data.ToArray(), 12);
 		data.RemoveRange(0, 16);
 		return quaternion;
 	}
