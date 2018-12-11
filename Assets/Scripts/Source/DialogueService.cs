@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using UnityEngine;
 
@@ -39,6 +40,10 @@ public class DialogueService {
 		dialogue.Add(currentIndex, new DialogueData(currentIndex, newDialogue.GetDialogue(), newDialogue.transform.position, newDialogue.transform.rotation, newDialogue.DialogueLinks()));		
 	}
 	
+	public void UpdateDialogueObject(DialogueData dialogueData) {
+		dialogue[dialogueData.id] = dialogueData;		
+	}
+	
 	public void UpdateDialogueObject(DialogueObject dialogueObject) {
 		dialogue[dialogueObject.GetDialogueId()] = new DialogueData(dialogueObject.GetDialogueId(), dialogueObject.GetDialogue(), dialogueObject.transform.position, dialogueObject.transform.rotation, dialogueObject.DialogueLinks());		
 	}
@@ -50,8 +55,8 @@ public class DialogueService {
 		}
 	}
 
-	public List<DialogueData> GetDialogue() {
-		return new List<DialogueData>(dialogue.Values);
+	public DialogueData GetDialogue(int dialogueId) {
+		return dialogue[dialogueId];
 	}
 	
 	public void WriteDialogueToFile() {

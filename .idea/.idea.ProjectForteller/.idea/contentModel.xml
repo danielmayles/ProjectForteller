@@ -20,6 +20,7 @@
             <e p="Node.cs" t="Include" />
           </e>
           <e p="EditorModeScripts" t="Include">
+            <e p="EditorDialogueController.cs" t="Include" />
             <e p="EditorDialogueObjectPlacer.cs" t="Include" />
             <e p="EditorPlayerController.cs" t="Include" />
           </e>

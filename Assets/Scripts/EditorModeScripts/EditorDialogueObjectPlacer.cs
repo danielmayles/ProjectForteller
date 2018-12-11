@@ -8,11 +8,13 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 	
 	[SerializeField] private Camera _camera;
 	[SerializeField] private DialogueObject _dialoguePrefab;
+	[SerializeField] private EditorDialogueController _dialogueController;
 	[SerializeField] private LayerMask _targetLayers;
-
+	
 	private DialogueObject _currentSelectedDialogueObject;
 	private bool _isCurrentSelectedObjectDialogueGrabbed;
-
+	private bool _isEditingText;
+	
 	private void Start()
 	{
 		Shell.dialogueService.OnLoadDialogueFinished += OnDialogueLoaded;
@@ -44,6 +46,10 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 		{
 			AttemptRemoveDialogueObject();
 		}
+		else if (Input.GetKeyDown(KeyCode.E)) {
+			ToggleEditDialogue();
+		}
+		
 		UpdateHeldDialogueObject();	
 	}
 
@@ -96,6 +102,24 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 				Vector3 hitpoint = raycastResult.point;
 				_currentSelectedDialogueObject.transform.position = new Vector3(Mathf.Round(hitpoint.x), 0, Mathf.Round(hitpoint.z));
 			}
+		}
+	}
+
+	void ToggleEditDialogue() {
+		if (_isEditingText) {
+			_isEditingText = false;
+			_dialogueController.DisableDialogueController();
+		}
+		else {
+			_isEditingText = true;
+			RaycastHit raycastResult;
+			if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, -1)) {
+			
+				DialogueObject hitDialogueObject = raycastResult.collider.GetComponent<DialogueObject>();
+				if (hitDialogueObject != null) {
+					_dialogueController.EnableDialogueController(hitDialogueObject.GetDialogueId());
+				}
+			}	
 		}
 	}
 
