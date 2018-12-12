@@ -9,13 +9,15 @@ using UnityEngine;
 
 public struct DialogueData {
 	public int id;
+	public string dialogueTitle;
 	public string dialogue;
 	public Vector3 Position;
 	public Quaternion Rotation;
 	public int[] DialogueLinks;
 	
-	public DialogueData(int id, string dialogue, Vector3 position, Quaternion rotation, int[] dialogueLinks) {
+	public DialogueData(int id, string dialogueTitle, string dialogue, Vector3 position, Quaternion rotation, int[] dialogueLinks) {
 		this.id = id;
+		this.dialogueTitle = dialogueTitle;
 		this.dialogue = dialogue;
 		this.Position = position;
 		this.Rotation = rotation;
@@ -36,8 +38,8 @@ public class DialogueService {
 		while (dialogue.ContainsKey(currentIndex)) {
 			currentIndex++;
 		}
-		newDialogue.init(currentIndex);
-		dialogue.Add(currentIndex, new DialogueData(currentIndex, newDialogue.GetDialogue(), newDialogue.transform.position, newDialogue.transform.rotation, newDialogue.DialogueLinks()));		
+		newDialogue.init(currentIndex, "New Dialogue", "");
+		dialogue.Add(currentIndex, new DialogueData(currentIndex, newDialogue.GetDialogueTitle() ,newDialogue.GetDialogue(), newDialogue.transform.position, newDialogue.transform.rotation, newDialogue.DialogueLinks()));		
 	}
 	
 	public void UpdateDialogueObject(DialogueData dialogueData) {
@@ -45,7 +47,7 @@ public class DialogueService {
 	}
 	
 	public void UpdateDialogueObject(DialogueObject dialogueObject) {
-		dialogue[dialogueObject.GetDialogueId()] = new DialogueData(dialogueObject.GetDialogueId(), dialogueObject.GetDialogue(), dialogueObject.transform.position, dialogueObject.transform.rotation, dialogueObject.DialogueLinks());		
+		dialogue[dialogueObject.GetDialogueId()] = new DialogueData(dialogueObject.GetDialogueId(),  dialogueObject.GetDialogueTitle(), dialogueObject.GetDialogue(), dialogueObject.transform.position, dialogueObject.transform.rotation, dialogueObject.DialogueLinks());		
 	}
 
 	public void RemoveDialogueObject(int id) {
@@ -70,6 +72,7 @@ public class DialogueService {
 			serializer.SerializeVector3(dialogue[dialogueKey].Position);
 			serializer.SerializeQuaternion(dialogue[dialogueKey].Rotation);
 			
+			serializer.SerializeString(dialogue[dialogueKey].dialogueTitle);
 			serializer.SerializeString(dialogue[dialogueKey].dialogue);
 			serializer.SerializeInt(dialogue[dialogueKey].DialogueLinks.Length);
 			for (int i = 0; i < dialogue[dialogueKey].DialogueLinks.Length; i++) {
@@ -91,12 +94,13 @@ public class DialogueService {
 			Quaternion rotation = serializer.ReadQuaternion();
 			Debug.Log(position);
 			
+			string dialogueTitleString = serializer.ReadString();
 			string dialogueString = serializer.ReadString();
 			int[] dialogueLinks = new int[serializer.ReadInt()];
 			for (int linkIndex = 0; linkIndex < dialogueLinks.Length; linkIndex++) {
 				dialogueLinks[linkIndex] = serializer.ReadInt();
 			}
-			DialogueData dialogueData = new DialogueData(id, dialogueString, position, rotation, dialogueLinks);
+			DialogueData dialogueData = new DialogueData(id, dialogueTitleString, dialogueString, position, rotation, dialogueLinks);
 			dialogue.Add(id, dialogueData);
 		}
 

@@ -1297,6 +1297,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 480306953}
+  _dialogueController: {fileID: 469599681}
+  _dialogueObjectPlacer: {fileID: 922842481}
   sensitivityY: 100
   sensitivityX: 100
 --- !u!4 &922842479
@@ -1340,7 +1342,6 @@ MonoBehaviour:
   _camera: {fileID: 480306953}
   _dialoguePrefab: {fileID: 114088355204468636, guid: d933720e2d2c9024db511f256ec5868d,
     type: 2}
-  _dialogueController: {fileID: 469599681}
   _targetLayers:
     serializedVersion: 2
     m_Bits: 4294967039

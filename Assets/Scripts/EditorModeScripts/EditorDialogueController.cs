@@ -18,8 +18,6 @@ public class EditorDialogueController : MonoBehaviour {
     }
     
     public void DisableDialogueController() {
-
-
         DialogueData dialogueData = Shell.dialogueService.GetDialogue(_currentEditingdialogueId);
         dialogueData.dialogue = _mainDialogue.text;
         Shell.dialogueService.UpdateDialogueObject(dialogueData);

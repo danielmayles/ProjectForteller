@@ -143,8 +143,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _id: 0
+  _dialogueTitle: 
   _dialogue: 
   _dialogueLinks: 
+  _textMeshProDialogueTitle: {fileID: 114846768135723344}
 --- !u!114 &114846768135723344
 MonoBehaviour:
   m_ObjectHideFlags: 1

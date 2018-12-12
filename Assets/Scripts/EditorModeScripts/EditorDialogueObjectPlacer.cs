@@ -8,12 +8,10 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 	
 	[SerializeField] private Camera _camera;
 	[SerializeField] private DialogueObject _dialoguePrefab;
-	[SerializeField] private EditorDialogueController _dialogueController;
 	[SerializeField] private LayerMask _targetLayers;
 	
 	private DialogueObject _currentSelectedDialogueObject;
 	private bool _isCurrentSelectedObjectDialogueGrabbed;
-	private bool _isEditingText;
 	
 	private void Start()
 	{
@@ -46,10 +44,7 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 		{
 			AttemptRemoveDialogueObject();
 		}
-		else if (Input.GetKeyDown(KeyCode.E)) {
-			ToggleEditDialogue();
-		}
-		
+
 		UpdateHeldDialogueObject();	
 	}
 
@@ -104,32 +99,14 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 			}
 		}
 	}
-
-	void ToggleEditDialogue() {
-		if (_isEditingText) {
-			_isEditingText = false;
-			_dialogueController.DisableDialogueController();
-		}
-		else {
-			_isEditingText = true;
-			RaycastHit raycastResult;
-			if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, -1)) {
-			
-				DialogueObject hitDialogueObject = raycastResult.collider.GetComponent<DialogueObject>();
-				if (hitDialogueObject != null) {
-					_dialogueController.EnableDialogueController(hitDialogueObject.GetDialogueId());
-				}
-			}	
-		}
-	}
-
+	
 	void OnDialogueLoaded(List<DialogueData> dialogue)
 	{
 		DialogueObject loadedObject;
 		for (int i = 0; i < dialogue.Count; i++)
 		{
 			loadedObject = CreateDialogueObject();
-			loadedObject.init(dialogue[i].id);
+			loadedObject.init(dialogue[i].id, dialogue[i].dialogueTitle, dialogue[i].dialogue);
 			loadedObject.transform.position = dialogue[i].Position;
 			loadedObject.transform.rotation = dialogue[i].Rotation;
 		}
