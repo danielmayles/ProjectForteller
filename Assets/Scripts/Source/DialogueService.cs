@@ -8,15 +8,13 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class DialogueData {
+public struct DialogueData {
 	public int id;
 	public string dialogueTitle;
 	public string dialogue;
 	public Vector3 Position;
 	public Quaternion Rotation;
 	public int[] DialogueLinks;
-	public delegate void DialogueUpdated();
-	public DialogueUpdated OnDialogueUpdated;
 	
 	public DialogueData(int id, string dialogueTitle, string dialogue, Vector3 position, Quaternion rotation, int[] dialogueLinks) {
 		this.id = id;
@@ -25,7 +23,6 @@ public class DialogueData {
 		this.Position = position;
 		this.Rotation = rotation;
 		this.DialogueLinks = dialogueLinks;
-		OnDialogueUpdated = null;
 	}
 }
 
@@ -37,6 +34,9 @@ public class DialogueService {
 
 	public delegate void LoadDialogueFinished(List<DialogueData> dialogue);
 	public LoadDialogueFinished OnLoadDialogueFinished;
+	
+	public delegate void DialogueUpdated(DialogueData dialogueData);
+	public DialogueUpdated OnDialogueUpdated;
 	
 	public void AddNewDialogueObject(DialogueObject newDialogue) {
 		while (dialogue.ContainsKey(currentIndex)) {
@@ -50,15 +50,15 @@ public class DialogueService {
 	
 	public void UpdateDialogueObject(DialogueData dialogueData) {
 		dialogue[dialogueData.id] = dialogueData;
-		if (dialogue[dialogueData.id].OnDialogueUpdated != null) {
-			dialogue[dialogueData.id].OnDialogueUpdated.Invoke();
+		if (OnDialogueUpdated != null) {
+			OnDialogueUpdated.Invoke(dialogue[dialogueData.id]);
 		}
 	}
 	
 	public void UpdateDialogueObject(DialogueObject dialogueObject) {
 		dialogue[dialogueObject.GetDialogueId()] = new DialogueData(dialogueObject.GetDialogueId(),  dialogueObject.GetDialogueTitle(), dialogueObject.GetDialogue(), dialogueObject.transform.position, dialogueObject.transform.rotation, dialogueObject.DialogueLinks());		
-		if (dialogue[dialogueObject.GetDialogueId()].OnDialogueUpdated != null) {
-			dialogue[dialogueObject.GetDialogueId()].OnDialogueUpdated.Invoke();
+		if (OnDialogueUpdated != null) {
+			OnDialogueUpdated.Invoke(dialogue[dialogueObject.GetDialogueId()]);
 		}
 	}
 

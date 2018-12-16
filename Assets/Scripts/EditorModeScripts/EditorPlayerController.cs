@@ -15,7 +15,8 @@ public class EditorPlayerController : MonoBehaviour {
 	private Vector2 _rotationVelocity;
 	private Rigidbody _rigidBody;
 	private bool _isEditingText;
-
+	private CursorLockMode _targetCursorMode;
+	
 	void Start() {
 		_rigidBody = GetComponent<Rigidbody>();
 	}
@@ -52,11 +53,11 @@ public class EditorPlayerController : MonoBehaviour {
 		
 			
 		if (Input.GetKey((KeyCode.KeypadEnter))) {
-			if (Cursor.lockState == CursorLockMode.Locked) {
-				Cursor.lockState = CursorLockMode.None;
+			if (_targetCursorMode == CursorLockMode.Locked) {
+				_targetCursorMode = CursorLockMode.None;
 			}
 			else {
-				Cursor.lockState = CursorLockMode.Locked;
+				_targetCursorMode = CursorLockMode.Locked;
 			}
 		}
 
@@ -70,7 +71,7 @@ public class EditorPlayerController : MonoBehaviour {
 			Shell.dialogueService.WriteDialogueToFile();
 		}
 		
-		if (Input.GetKeyDown(KeyCode.E)) {
+		if (Input.GetKeyDown(KeyCode.Tab)) {
 			ToggleEditDialogue();
 		}
 	}
@@ -81,8 +82,7 @@ public class EditorPlayerController : MonoBehaviour {
 			_dialogueObjectPlacer.enabled = true;
 			_dialogueController.DisableDialogueController();
 		}
-		else {
-			
+		else {		
 			RaycastHit raycastResult;
 			if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, -1)) {		
 				DialogueObject hitDialogueObject = raycastResult.collider.GetComponent<DialogueObject>();
@@ -99,4 +99,7 @@ public class EditorPlayerController : MonoBehaviour {
 		return _isEditingText;
 	}
 
+	private void OnGUI() {
+		Cursor.lockState = _targetCursorMode;
+	}
 }
