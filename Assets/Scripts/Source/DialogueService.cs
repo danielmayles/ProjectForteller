@@ -6,14 +6,17 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public struct DialogueData {
+public class DialogueData {
 	public int id;
 	public string dialogueTitle;
 	public string dialogue;
 	public Vector3 Position;
 	public Quaternion Rotation;
 	public int[] DialogueLinks;
+	public delegate void DialogueUpdated();
+	public DialogueUpdated OnDialogueUpdated;
 	
 	public DialogueData(int id, string dialogueTitle, string dialogue, Vector3 position, Quaternion rotation, int[] dialogueLinks) {
 		this.id = id;
@@ -22,6 +25,7 @@ public struct DialogueData {
 		this.Position = position;
 		this.Rotation = rotation;
 		this.DialogueLinks = dialogueLinks;
+		OnDialogueUpdated = null;
 	}
 }
 
@@ -38,16 +42,24 @@ public class DialogueService {
 		while (dialogue.ContainsKey(currentIndex)) {
 			currentIndex++;
 		}
-		newDialogue.init(currentIndex, "New Dialogue", "");
-		dialogue.Add(currentIndex, new DialogueData(currentIndex, newDialogue.GetDialogueTitle() ,newDialogue.GetDialogue(), newDialogue.transform.position, newDialogue.transform.rotation, newDialogue.DialogueLinks()));		
+
+		DialogueData dialogueData = new DialogueData(currentIndex, newDialogue.GetDialogueTitle(), newDialogue.GetDialogue(), newDialogue.transform.position, newDialogue.transform.rotation, newDialogue.DialogueLinks());
+		newDialogue.init(dialogueData);
+		dialogue.Add(currentIndex, dialogueData);		
 	}
 	
 	public void UpdateDialogueObject(DialogueData dialogueData) {
-		dialogue[dialogueData.id] = dialogueData;		
+		dialogue[dialogueData.id] = dialogueData;
+		if (dialogue[dialogueData.id].OnDialogueUpdated != null) {
+			dialogue[dialogueData.id].OnDialogueUpdated.Invoke();
+		}
 	}
 	
 	public void UpdateDialogueObject(DialogueObject dialogueObject) {
 		dialogue[dialogueObject.GetDialogueId()] = new DialogueData(dialogueObject.GetDialogueId(),  dialogueObject.GetDialogueTitle(), dialogueObject.GetDialogue(), dialogueObject.transform.position, dialogueObject.transform.rotation, dialogueObject.DialogueLinks());		
+		if (dialogue[dialogueObject.GetDialogueId()].OnDialogueUpdated != null) {
+			dialogue[dialogueObject.GetDialogueId()].OnDialogueUpdated.Invoke();
+		}
 	}
 
 	public void RemoveDialogueObject(int id) {
@@ -104,8 +116,7 @@ public class DialogueService {
 			dialogue.Add(id, dialogueData);
 		}
 
-		if (OnLoadDialogueFinished != null)
-		{
+		if (OnLoadDialogueFinished != null){
 			OnLoadDialogueFinished(dialogue.Values.ToList());
 		}
 	}

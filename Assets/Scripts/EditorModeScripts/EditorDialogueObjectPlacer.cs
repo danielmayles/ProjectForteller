@@ -100,13 +100,12 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 		}
 	}
 	
-	void OnDialogueLoaded(List<DialogueData> dialogue)
-	{
+	void OnDialogueLoaded(List<DialogueData> dialogue) {
 		DialogueObject loadedObject;
 		for (int i = 0; i < dialogue.Count; i++)
 		{
 			loadedObject = CreateDialogueObject();
-			loadedObject.init(dialogue[i].id, dialogue[i].dialogueTitle, dialogue[i].dialogue);
+			loadedObject.init(dialogue[i]);
 			loadedObject.transform.position = dialogue[i].Position;
 			loadedObject.transform.rotation = dialogue[i].Rotation;
 		}

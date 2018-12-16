@@ -11,14 +11,27 @@ public class DialogueObject : MonoBehaviour
 	[SerializeField] private int[] _dialogueLinks;
 	[SerializeField] private TMPro.TextMeshProUGUI _textMeshProDialogueTitle;
 
-	public void init(int id, string dialogueTitle, string dialogue)
-	{
-		_id = id;
-		_dialogueTitle = dialogueTitle;
-		_dialogue = dialogue;
+	public void init(DialogueData dialogueData){
+		_id = dialogueData.id;
+		_dialogueTitle = dialogueData.dialogueTitle;
+		_dialogue = dialogueData.dialogue;
 		_textMeshProDialogueTitle.text = _dialogueTitle;
+		dialogueData.OnDialogueUpdated += OnDialogueUpdated;
 	}
 
+	private void OnDestroy() {
+		Shell.dialogueService.GetDialogue(_id).OnDialogueUpdated -= OnDialogueUpdated;
+	}
+
+	public void OnDialogueUpdated() {
+		DialogueData dialogueData = Shell.dialogueService.GetDialogue(_id); 
+		Debug.Log(dialogueData.dialogueTitle);
+		_dialogueTitle = dialogueData.dialogueTitle;
+		_dialogue = dialogueData.dialogue;
+		_textMeshProDialogueTitle.text = _dialogueTitle;
+		
+	}
+	
 	public string GetDialogueTitle() {
 		return _dialogueTitle;
 	}

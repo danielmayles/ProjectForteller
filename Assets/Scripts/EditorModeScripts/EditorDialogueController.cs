@@ -15,11 +15,13 @@ public class EditorDialogueController : MonoBehaviour {
         gameObject.SetActive(true);
         DialogueData dialogueData = Shell.dialogueService.GetDialogue(dialogueIdToLoad);
         _mainDialogue.text = dialogueData.dialogue;
+        _dialogueTitle.text = dialogueData.dialogueTitle;
     }
     
     public void DisableDialogueController() {
         DialogueData dialogueData = Shell.dialogueService.GetDialogue(_currentEditingdialogueId);
         dialogueData.dialogue = _mainDialogue.text;
+        dialogueData.dialogueTitle = _dialogueTitle.text;
         Shell.dialogueService.UpdateDialogueObject(dialogueData);
         gameObject.SetActive(false);      
     }
