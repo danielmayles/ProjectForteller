@@ -81,6 +81,7 @@ public class EditorPlayerController : MonoBehaviour {
 			_isEditingText = false;
 			_dialogueObjectPlacer.enabled = true;
 			_dialogueController.DisableDialogueController();
+			_targetCursorMode = CursorLockMode.Locked;
 		}
 		else {		
 			RaycastHit raycastResult;
@@ -90,6 +91,7 @@ public class EditorPlayerController : MonoBehaviour {
 					_isEditingText = true;
 					_dialogueObjectPlacer.enabled = false;
 					_dialogueController.EnableDialogueController(hitDialogueObject.GetDialogueId());
+					_targetCursorMode = CursorLockMode.None;
 				}
 			}	
 		}
