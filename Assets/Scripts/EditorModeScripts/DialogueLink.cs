@@ -11,9 +11,11 @@ public class DialogueLink : MonoBehaviour {
     void Update()
     {
         if (_targetTransform != null) {
+            _linkLineRenderer.SetPosition(0, transform.position);
             _linkLineRenderer.SetPosition(1, _targetTransform.position);
         }
         else {
+            _linkLineRenderer.SetPosition(0, transform.position);  
             _linkLineRenderer.SetPosition(1, transform.position);  
         }
     }
