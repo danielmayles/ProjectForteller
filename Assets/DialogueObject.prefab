@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224957543866452368}
   - component: {fileID: 223937388433500684}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: DialogueCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   - component: {fileID: 224408202922886908}
   - component: {fileID: 222492054134577074}
   - component: {fileID: 114846768135723344}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: DialogueTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -442,7 +442,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4315211042463406994}
   - component: {fileID: 7647885774675088476}
-  m_Layer: 5
+  m_Layer: 9
   m_Name: LineRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

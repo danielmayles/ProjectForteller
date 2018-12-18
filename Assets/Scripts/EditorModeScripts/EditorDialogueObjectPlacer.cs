@@ -61,10 +61,9 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 
 	void GrabOrCreateDialogueObject() {
 		RaycastHit raycastResult;
-		if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, -1)) {
+		if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, _targetLayers)) {
 			DialogueObject hitDialogueObject = raycastResult.collider.GetComponent<DialogueObject>();
-			if (hitDialogueObject != null)
-			{
+			if (hitDialogueObject != null) {
 				_isCurrentSelectedObjectDialogueGrabbed = true;
 				_currentSelectedDialogueObject = hitDialogueObject;
 			}

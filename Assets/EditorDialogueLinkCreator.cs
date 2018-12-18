@@ -20,15 +20,19 @@ public class EditorDialogueLinkCreator : MonoBehaviour {
 				_currentSelectedLink = hitResult.collider.GetComponent<DialogueLink>();
 				if (_currentSelectedLink != null) {
 					GetComponent<EditorDialogueObjectPlacer>().DisableDialogueObjectPlacer();
+
+					Debug.Log("Hitme");
+					DialogueData dialogueData = Shell.dialogueService.GetDialogue(_currentSelectedLink.GetDialogueId());
+					dialogueData.DialogueLinks = new int[0];
+					Shell.dialogueService.UpdateDialogueObject(dialogueData);
+
 					_currentSelectedLink.SetTarget(_playerLinkTarget);
 				}
 			}
 		} else if (_currentSelectedLink != null) {
 			GetComponent<EditorDialogueObjectPlacer>().EnableDialogueObjectPlacer();
 			RaycastHit hitResult;
-			if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitResult, 100,
-				_targetLayers)) {
-
+			if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitResult, 100, _targetLayers)) {
 				DialogueLink targetLink = hitResult.collider.GetComponent<DialogueLink>();
 				if (targetLink != null) {
 					_currentSelectedLink.SetTarget(targetLink.transform);
