@@ -7,6 +7,12 @@ using UnityEngine.EventSystems;
 public class DialogueLink : MonoBehaviour {
     [SerializeField] private LineRenderer _linkLineRenderer;
     private Transform _targetTransform;
+    private int _dialogueId;
+    
+    
+    public void Init(int dialogueId) {
+        _dialogueId = dialogueId;
+    }
     
     void Update()
     {
@@ -22,5 +28,9 @@ public class DialogueLink : MonoBehaviour {
 
     public void SetTarget(Transform target) {
         _targetTransform = target;
+    }
+
+    public int GetDialogueId() {
+        return _dialogueId;
     }
 }

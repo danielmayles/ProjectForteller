@@ -1308,9 +1308,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 922842479}
+  - component: {fileID: 922842482}
   - component: {fileID: 922842478}
   - component: {fileID: 922842481}
-  - component: {fileID: 922842482}
   - component: {fileID: 922842480}
   - component: {fileID: 922842477}
   m_Layer: 0

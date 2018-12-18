@@ -89,6 +89,14 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 			}
 		}
 	}
+	
+	void AttemptRemoveDialogueObject(DialogueObject target)
+	{	
+		Shell.dialogueService.RemoveDialogueObject(target.GetDialogueId());
+		Destroy(target.gameObject);
+		_currentSelectedDialogueObject = null;
+		_isCurrentSelectedObjectDialogueGrabbed = false;	
+	}
 
 	void UpdateHeldDialogueObject() {
 		if (_currentSelectedDialogueObject != null) {
@@ -110,5 +118,15 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 			loadedObject.transform.rotation = dialogue[i].Rotation;
 		}
 	}
-	
+
+	public void DisableDialogueObjectPlacer() {
+		if (_currentSelectedDialogueObject != null) {
+			AttemptRemoveDialogueObject(_currentSelectedDialogueObject);
+			this.enabled = false;
+		}
+	}
+
+	public void EnableDialogueObjectPlacer() {
+		this.enabled = true;
+	}
 }

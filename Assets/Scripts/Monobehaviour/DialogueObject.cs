@@ -20,6 +20,11 @@ public class DialogueObject : MonoBehaviour
 		_dialogue = dialogueData.dialogue;
 		_textMeshProDialogueTitle.text = _dialogueTitle;
 		Shell.dialogueService.OnDialogueUpdated += OnDialogueUpdated;
+
+		DialogueLink[] dialogueLinkObjects = GetComponentsInChildren<DialogueLink>();
+		for (int i = 0; i < dialogueLinkObjects.Length; i++) {
+			dialogueLinkObjects[i].Init(_id);
+		}	
 	}
 
 	private void OnDestroy() {
@@ -31,6 +36,7 @@ public class DialogueObject : MonoBehaviour
 			_dialogueTitle = dialogueData.dialogueTitle;
 			_dialogue = dialogueData.dialogue;
 			_textMeshProDialogueTitle.text = _dialogueTitle;
+			_dialogueLinks = dialogueData.DialogueLinks;
 		}
 	}
 	
