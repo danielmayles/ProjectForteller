@@ -20,8 +20,6 @@ public class EditorDialogueLinkCreator : MonoBehaviour {
 				_currentSelectedLink = hitResult.collider.GetComponent<DialogueLink>();
 				if (_currentSelectedLink != null) {
 					GetComponent<EditorDialogueObjectPlacer>().DisableDialogueObjectPlacer();
-
-					Debug.Log("Hitme");
 					DialogueData dialogueData = Shell.dialogueService.GetDialogue(_currentSelectedLink.GetDialogueId());
 					dialogueData.DialogueLinks = new int[0];
 					Shell.dialogueService.UpdateDialogueObject(dialogueData);
@@ -35,7 +33,7 @@ public class EditorDialogueLinkCreator : MonoBehaviour {
 			if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitResult, 100, _targetLayers)) {
 				DialogueLink targetLink = hitResult.collider.GetComponent<DialogueLink>();
 				if (targetLink != null) {
-					_currentSelectedLink.SetTarget(targetLink.transform);
+					_currentSelectedLink.SetTarget(targetLink.GetOwningDialogueObject().transform);
 					
 					DialogueData dialogueData = Shell.dialogueService.GetDialogue(_currentSelectedLink.GetDialogueId());
 					dialogueData.DialogueLinks = new int[dialogueData.DialogueLinks.Length + 1];
