@@ -86,7 +86,7 @@ public class EditorPlayerController : MonoBehaviour {
 		else {		
 			RaycastHit raycastResult;
 			if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, -1)) {		
-				DialogueObject hitDialogueObject = raycastResult.collider.GetComponent<DialogueObject>();
+				EditorDialogueObject hitDialogueObject = raycastResult.collider.GetComponent<EditorDialogueObject>();
 				if (hitDialogueObject != null) {
 					_isEditingText = true;
 					_dialogueObjectPlacer.enabled = false;

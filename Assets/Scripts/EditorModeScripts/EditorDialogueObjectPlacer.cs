@@ -7,11 +7,12 @@ using UnityEngine.Serialization;
 public class EditorDialogueObjectPlacer : MonoBehaviour {
 	
 	[SerializeField] private Camera _camera;
-	[SerializeField] private DialogueObject _dialoguePrefab;
+	[SerializeField] private GameObject _dialoguePrefab;
+	[SerializeField] private GameObject _dialogueChoicePrefab;
 	[SerializeField] private LayerMask _targetLayers;
 	
-	private DialogueObject _currentSelectedDialogueObject;
-	private bool _isCurrentSelectedObjectDialogueGrabbed;
+	private GameObject _currentSelectedObject;
+	private bool _isObjectGrabbed;
 	
 	private void Start()
 	{
@@ -23,53 +24,54 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 		Shell.dialogueService.OnLoadDialogueFinished -= OnDialogueLoaded;
 	}
 
-	private DialogueObject CreateDialogueObject()
-	{
-		return Instantiate<DialogueObject>(_dialoguePrefab);
-	}
-
 	void Update() {
 		if (Input.GetMouseButtonDown(0)) 
 		{
-			if (_currentSelectedDialogueObject != null) 
+			if (_currentSelectedObject != null) 
 			{
-				PlaceDialogueObject();
+				PlaceCurrentObject();
 			} 
 			else 
 			{
-				GrabOrCreateDialogueObject();
+				CreateDialogueObject();
 			}
 		} 
 		else if (Input.GetMouseButtonDown(1)) 
 		{
-			AttemptRemoveDialogueObject();
+			if (_currentSelectedObject == null) {
+				CreateDialogueChoice();
+			} 
 		}
 
 		UpdateHeldDialogueObject();	
 	}
 
-	void PlaceDialogueObject() {
-		if (_isCurrentSelectedObjectDialogueGrabbed){
-			_isCurrentSelectedObjectDialogueGrabbed = false;
-			Shell.dialogueService.UpdateDialogueObject(_currentSelectedDialogueObject);
+	void PlaceCurrentObject() {
+		EditorDialogueObject dialogueObject = _currentSelectedObject.GetComponent<EditorDialogueObject>();
+		EditorDialogueChoice dialogueChoice = _currentSelectedObject.GetComponent<EditorDialogueChoice>();
+
+		if (dialogueObject != null) {
+			Shell.dialogueService.AddNewDialogueObject(dialogueObject);
 		}
-		else if (_currentSelectedDialogueObject != null) {
-			Shell.dialogueService.AddNewDialogueObject(_currentSelectedDialogueObject);
+
+		if(dialogueChoice != null) {
+			Shell.dialogueService.AddNewDialogueChoice(dialogueChoice);
 		}
-		_currentSelectedDialogueObject = null;
+		
+		_currentSelectedObject = null;
 	}
 
-	void GrabOrCreateDialogueObject() {
+	void CreateDialogueObject() {
 		RaycastHit raycastResult;
 		if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, _targetLayers)) {
-			DialogueObject hitDialogueObject = raycastResult.collider.GetComponent<DialogueObject>();
-			if (hitDialogueObject != null) {
-				_isCurrentSelectedObjectDialogueGrabbed = true;
-				_currentSelectedDialogueObject = hitDialogueObject;
-			}
-			else {
-				_currentSelectedDialogueObject = CreateDialogueObject();
-			}
+			_currentSelectedObject = Instantiate(_dialoguePrefab);
+		}
+	}
+
+	void CreateDialogueChoice() {
+		RaycastHit raycastResult;
+		if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, _targetLayers)) {
+			_currentSelectedObject = Instantiate(_dialogueChoicePrefab);
 		}
 	}
 
@@ -78,49 +80,52 @@ public class EditorDialogueObjectPlacer : MonoBehaviour {
 		RaycastHit raycastResult;
 		if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, -1))
 		{
-			DialogueObject hitDialogueObject = raycastResult.collider.GetComponent<DialogueObject>();
+			EditorDialogueObject hitDialogueObject = raycastResult.collider.GetComponent<EditorDialogueObject>();
 			if (hitDialogueObject != null)
 			{
 				Shell.dialogueService.RemoveDialogueObject(hitDialogueObject.GetDialogueId());
 				Destroy(hitDialogueObject.gameObject);
-				_currentSelectedDialogueObject = null;
-				_isCurrentSelectedObjectDialogueGrabbed = false;
+				_currentSelectedObject = null;
+				_isObjectGrabbed = false;
 			}
 		}
 	}
 	
-	void AttemptRemoveDialogueObject(DialogueObject target)
-	{	
-		Shell.dialogueService.RemoveDialogueObject(target.GetDialogueId());
-		Destroy(target.gameObject);
-		_currentSelectedDialogueObject = null;
-		_isCurrentSelectedObjectDialogueGrabbed = false;	
+	void AttemptRemoveDialogueObject(GameObject target)
+	{
+		EditorDialogueObject dialogueObject = target.GetComponent<EditorDialogueObject>();
+		if (dialogueObject != null) {
+			Shell.dialogueService.RemoveDialogueObject(dialogueObject.GetDialogueId());
+			Destroy(target);
+			_currentSelectedObject = null;
+			_isObjectGrabbed = false;
+		}
 	}
 
 	void UpdateHeldDialogueObject() {
-		if (_currentSelectedDialogueObject != null) {
+		if (_currentSelectedObject != null) {
 			RaycastHit raycastResult;
 			if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out raycastResult, 100, _targetLayers)) {
 				Vector3 hitpoint = raycastResult.point;
-				_currentSelectedDialogueObject.transform.position = new Vector3(Mathf.Round(hitpoint.x), 0, Mathf.Round(hitpoint.z));
+				_currentSelectedObject.transform.position = new Vector3(Mathf.Round(hitpoint.x), 0, Mathf.Round(hitpoint.z));
 			}
 		}
 	}
 	
 	void OnDialogueLoaded(List<DialogueData> dialogue) {
-		DialogueObject loadedObject;
+		EditorDialogueObject loadedObject;
 		for (int i = 0; i < dialogue.Count; i++)
 		{
-			loadedObject = CreateDialogueObject();
+			loadedObject = Instantiate(_dialoguePrefab).GetComponent<EditorDialogueObject>();
 			loadedObject.init(dialogue[i]);
-			loadedObject.transform.position = dialogue[i].Position;
-			loadedObject.transform.rotation = dialogue[i].Rotation;
+			loadedObject.transform.position = dialogue[i].position;
+			loadedObject.transform.rotation = dialogue[i].rotation;
 		}
 	}
 
 	public void DisableDialogueObjectPlacer() {
-		if (_currentSelectedDialogueObject != null) {
-			AttemptRemoveDialogueObject(_currentSelectedDialogueObject);
+		if (_currentSelectedObject != null) {
+			AttemptRemoveDialogueObject(_currentSelectedObject);
 			this.enabled = false;
 		}
 	}

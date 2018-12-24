@@ -25,37 +25,14 @@ public class EditorDialogueController : MonoBehaviour {
         DialogueData dialogueData = Shell.dialogueService.GetDialogue(dialogueIdToLoad);
         _mainDialogue.text = dialogueData.dialogue;
         _dialogueTitle.text = dialogueData.dialogueTitle;
-		_amountOfChoices.text = dialogueData.DialogueLinks.Length.ToString();
-		_amountOfChoices.onValueChanged.AddListener(OnAmountOfChoicesChange);
+		_amountOfChoices.text = dialogueData.dialogueChoices.Length.ToString();
     }
 
 	public void DisableDialogueController() {
         DialogueData dialogueData = Shell.dialogueService.GetDialogue(_currentEditingdialogueId);
         dialogueData.dialogue = _mainDialogue.text;
         dialogueData.dialogueTitle = _dialogueTitle.text;
-		int[] dialogueLinks = new int[int.Parse(_amountOfChoices.text)];
-		for (int i = 0; i < dialogueLinks.Length; i++) {
-			if (dialogueData.DialogueLinks.Length > i) {
-				dialogueLinks[i] = dialogueData.DialogueLinks[i];
-			}
-		}
-
-		dialogueData.DialogueLinks = dialogueLinks;
 		Shell.dialogueService.UpdateDialogueObject(dialogueData);
-		_amountOfChoices.onValueChanged.RemoveListener(OnAmountOfChoicesChange);
 		gameObject.SetActive(false);      
     }
-
-	private void OnAmountOfChoicesChange(string arg0) {
-		int amount = 0;	
-		int.TryParse(_amountOfChoices.text, out amount);
-		for(int i = 0; i < _choices.Count; i++) {
-			Destroy(_choices[i]);
-		}
-		_choices.Clear();
-
-		for(int i = 0; i < amount; i++) {
-			_choices.Add(Instantiate<TMP_InputField>(_choiceUIPrefab, _choicesParent));
-		}
-	}
 }

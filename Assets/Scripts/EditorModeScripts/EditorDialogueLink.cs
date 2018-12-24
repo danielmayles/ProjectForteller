@@ -4,13 +4,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DialogueLink : MonoBehaviour {
+public class EditorDialogueLink : MonoBehaviour {
     [SerializeField] private LineRenderer _linkLineRenderer;
     private Transform _targetTransform;
-    private DialogueObject _owningDialogueObject;
+    private EditorDialogueObject _owningDialogueObject;
     
     
-    public void Init(DialogueObject owningDialogueObject) {
+    public void Init(EditorDialogueObject owningDialogueObject) {
 		_owningDialogueObject = owningDialogueObject;
     }
     
@@ -34,7 +34,7 @@ public class DialogueLink : MonoBehaviour {
 		return _owningDialogueObject.GetDialogueId();
     }
 
-	public DialogueObject GetOwningDialogueObject() {
+	public EditorDialogueObject GetOwningDialogueObject() {
 		return _owningDialogueObject;
 	}
 }
